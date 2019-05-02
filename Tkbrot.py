@@ -26,6 +26,8 @@ global Ymax
 global Xmax
 global Ymin
 global Xmin
+global n 
+n = 150
 #Coucou !! "inconu?" 12/05/17 club d'échec UPMC
 if l/h > 3/2:
     Marge = ((l*2/h)-3)/2
@@ -40,14 +42,14 @@ elif l/h < 3/2:
     Xmin = -2
 
 
-def mandelbrot():
+def mandelbrot(n):
     """None -> NoneType
     Hypoyhèse: ø
     Génère la fractale de mandelbrot"""
     for i in range(h):
         for j in range(l):
-            b = point( l, h, i, j, Xmax, Xmin, Ymax, Ymin)
-            img.put("#%02x%02x%02x" % (0,0,b),(j, i))
+            b = point( l, h, i, j, Xmax, Xmin, Ymin, Ymax,n)
+            img.put("#%02x%02x%02x" % (255//23*(b%23),255//7*(b%7),255//17*(b%17)),(j, i))
             
 def Sourie(evt):
     """None -> NoneType
@@ -76,7 +78,8 @@ def Zoom(evt):
     global Ymax
     global Xmax
     global Ymin
-    global Xmin 
+    global Xmin
+    global n
     zoom = evt.num
     if 5 == zoom or zoom == 4:
         pady += (zoom-4.5)*h/100
@@ -86,16 +89,20 @@ def Zoom(evt):
             padx = l/1000
         rect()
     if 1 == zoom:
-        if not(X-padx < 0 or X+padx > l or Y-pady < 0 or Y+pady > h):
-            x = (Xmax-Xmin)
-            y = (Ymax-Ymin)
-            Xmax = ((X+padx)*x/l)+Xmin
-            Xmin = ((X-padx)*x/l)+Xmin
-            Ymax = ((Y+pady)*y/h)+Ymin
-            Ymin = ((Y-pady)*y/h)+Ymin
-            mandelbrot()
+        x = (Xmax-Xmin)
+        y = (Ymax-Ymin)
+        Xmax = ((X+padx)*x/l)+Xmin
+        Xmin = ((X-padx)*x/l)+Xmin
+        Ymax = ((Y+pady)*y/h)+Ymin
+        Ymin = ((Y-pady)*y/h)+Ymin
+        n *= 1.3
+        print(n)
+        print("x= ",(Xmax+Xmin)/2)
+        print("y= ",(Ymax+Ymin)/2)
+        print()
+        mandelbrot(int(n))
 
-mandelbrot()
+mandelbrot(n)
 rectangle = canvas.create_rectangle(l,l,l,l, outline = "white")
 canvas.focus_set()
 canvas.bind("<Motion>", Sourie)
